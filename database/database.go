@@ -2,13 +2,11 @@ package database
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/octaviomuller/deck-chips-server/helpers"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -35,22 +33,9 @@ func ConnectDatabase() {
 		helpers.EnvVarError("DATABASE_NAME")
 	}
 
-	defer func() {
-		if err := client.Disconnect(context.TODO()); err != nil {
-			panic(err)
-		}
-	}()
+	DB = client.Database(dbName)
 }
 
-func GetCards() {
-	var cards bson.M
-
-	query := bson.D{}
-
-	err := DB.Collection("cards").FindOne(context.TODO(), query).Decode(&cards)
-	if err == nil {
-		panic(err)
-	}
-
-	fmt.Println(cards)
+func GetCollection(collectionName string) *mongo.Collection {
+	return DB.Collection(collectionName)
 }

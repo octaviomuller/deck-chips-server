@@ -1,24 +1,22 @@
 package database
 
-// import (
-// 	"context"
-// 	"fmt"
+import (
+	"context"
 
-// 	"go.mongodb.org/mongo-driver/bson"
-// 	"go.mongodb.org/mongo-driver/mongo"
-// )
+	"github.com/octaviomuller/deck-chips-server/models"
+	"go.mongodb.org/mongo-driver/bson"
+)
 
-// var collection *mongo.Collection = GetCollection("cards")
+func GetCard() models.Card {
+	collection := GetCollection("cards")
+	card := models.Card{}
 
-// func GetCards() {
-// 	var cards bson.M
+	query := bson.D{}
 
-// 	query := bson.D{}
+	err := collection.FindOne(context.TODO(), query).Decode(&card)
+	if err != nil {
+		panic(err)
+	}
 
-// 	err := collection.FindOne(context.TODO(), query).Decode(&cards)
-// 	if err == nil {
-// 		panic(err)
-// 	}
-
-// 	fmt.Println(cards)
-// }
+	return card
+}
