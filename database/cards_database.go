@@ -5,18 +5,21 @@ import (
 
 	"github.com/octaviomuller/deck-chips-server/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func GetCard() models.Card {
+func GetCard(code string) (models.Card, error) {
 	collection := GetCollection("cards")
 	card := models.Card{}
 
-	query := bson.D{}
-
-	err := collection.FindOne(context.TODO(), query).Decode(&card)
-	if err != nil {
-		panic(err)
+	query := bson.M{
+		"cardCode": code,
 	}
 
-	return card
+	err := collection.FindOne(context.TODO(), query).Decode(&card)
+	if err == mongo.ErrNoDocuments {
+		return card, mongo.ErrNoDocuments
+	}
+
+	return card, nil
 }
