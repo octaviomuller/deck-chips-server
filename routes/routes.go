@@ -8,7 +8,8 @@ import (
 func HandleRequests() {
 	r := gin.Default()
 
-	r.GET("/cards/:code", controllers.GetCard)
+	r.GET("/cards/:code", controllers.GetCardByCode)
+	r.GET("/cards", controllers.GetCards)
 
 	r.Run()
 }
