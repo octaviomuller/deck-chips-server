@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	"net/http"
+	"errors"
 	"reflect"
 	"strconv"
 
@@ -14,14 +14,18 @@ type paginationQuery struct {
 	limit int
 }
 
-func Pagination(c *gin.Context, FindOptions *options.FindOptions) {
-	page, _ := strconv.ParseInt(c.Params.ByName("page"), 10, 32)
-	limit, _ := strconv.ParseInt(c.Params.ByName("limit"), 10, 32)
+func Pagination(c *gin.Context) (*options.FindOptions, error) {
+	findOptions := options.Find()
 
-	if reflect.TypeOf(page).String() != "int32" || reflect.TypeOf(limit).String() != "int32" {
-		c.JSON(http.StatusUnprocessableEntity, ResponseMessage("Invalid parameters values!"))
+	page, _ := strconv.ParseInt(c.Request.URL.Query().Get("page"), 10, 32)
+	limit, _ := strconv.ParseInt(c.Request.URL.Query().Get("limit"), 10, 32)
+
+	if reflect.TypeOf(page).String() != "int64" || reflect.TypeOf(limit).String() != "int64" {
+		return nil, errors.New("Invalid parameters values!")
 	}
 
-	FindOptions.SetSkip((page - 1) * limit)
-	FindOptions.SetLimit(limit)
+	findOptions.SetSkip((page - 1) * limit)
+	findOptions.SetLimit(limit)
+
+	return findOptions, nil
 }

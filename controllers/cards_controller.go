@@ -28,7 +28,7 @@ func GetCardByCode(c *gin.Context) {
 }
 
 func GetCards(c *gin.Context) {
-	card, err := database.GetCards(c)
+	cards, err := database.GetCards(c)
 
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -38,9 +38,11 @@ func GetCards(c *gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusInternalServerError, err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": string(err.Error()),
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, card)
+	c.JSON(http.StatusOK, cards)
 }
