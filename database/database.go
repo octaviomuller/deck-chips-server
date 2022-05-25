@@ -6,14 +6,17 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/octaviomuller/deck-chips-server/helpers"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var DB *mongo.Database
 
-func ConnectDatabase() {
+type Helpers interface {
+	EnvVarError(variableName string)
+}
+
+func ConnectDatabase(envVarError func(variableName string)) {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found")
 	}
@@ -30,7 +33,7 @@ func ConnectDatabase() {
 
 	dbName := os.Getenv("DATABASE_NAME")
 	if dbName == "" {
-		helpers.EnvVarError("DATABASE_NAME")
+		envVarError("DATABASE_NAME")
 	}
 
 	DB = client.Database(dbName)
