@@ -2,6 +2,7 @@ package config
 
 import (
 	"context"
+	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -12,7 +13,7 @@ import (
 
 func ConnectDatabase() *mongo.Database {
 	if err := godotenv.Load("../.env"); err != nil {
-		panic("No .env file found")
+		log.Fatal("No .env file found")
 	}
 
 	uri := os.Getenv("MONGO_URI")
