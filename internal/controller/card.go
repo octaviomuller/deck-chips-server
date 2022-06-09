@@ -10,7 +10,15 @@ import (
 
 type cardService interface {
 	GetCardByCardCode(cardCode string) (*models.Card, error)
-	GetCards(page string, limit string) (*[]models.Card, error)
+	GetCards(
+		page string,
+		limit string,
+		region string,
+		cost string,
+		cardType string,
+		rarity string,
+		set string,
+	) (*[]models.Card, error)
 }
 
 type CardController struct {
@@ -53,7 +61,21 @@ func (controller *CardController) Index(context *gin.Context) {
 	page := context.Request.URL.Query().Get("page")
 	limit := context.Request.URL.Query().Get("limit")
 
-	cards, err := controller.cardService.GetCards(page, limit)
+	region := context.Request.URL.Query().Get("region")
+	cost := context.Request.URL.Query().Get("cost")
+	cardType := context.Request.URL.Query().Get("type")
+	rarity := context.Request.URL.Query().Get("rarity")
+	set := context.Request.URL.Query().Get("set")
+
+	cards, err := controller.cardService.GetCards(
+		page,
+		limit,
+		region,
+		cost,
+		cardType,
+		rarity,
+		set,
+	)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			context.JSON(http.StatusBadRequest, gin.H{
