@@ -13,6 +13,7 @@ type cardService interface {
 	GetCards(
 		page string,
 		limit string,
+		name string,
 		region string,
 		cost string,
 		cardType string,
@@ -61,6 +62,7 @@ func (controller *CardController) Index(context *gin.Context) {
 	page := context.Request.URL.Query().Get("page")
 	limit := context.Request.URL.Query().Get("limit")
 
+	name := context.Request.URL.Query().Get("name")
 	region := context.Request.URL.Query().Get("region")
 	cost := context.Request.URL.Query().Get("cost")
 	cardType := context.Request.URL.Query().Get("type")
@@ -70,6 +72,7 @@ func (controller *CardController) Index(context *gin.Context) {
 	cards, err := controller.cardService.GetCards(
 		page,
 		limit,
+		name,
 		region,
 		cost,
 		cardType,

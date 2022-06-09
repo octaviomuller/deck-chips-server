@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -42,6 +43,7 @@ func (service *cardService) GetCardByCardCode(cardCode string) (*models.Card, er
 func (service *cardService) GetCards(
 	page string,
 	limit string,
+	name string,
 	region string,
 	cost string,
 	cardType string,
@@ -52,6 +54,12 @@ func (service *cardService) GetCards(
 		"collectible": true,
 	}
 
+	if name != "" {
+		query["name"] = bson.M{
+			"$regex":   name,
+			"$options": "i",
+		}
+	}
 	if region != "" {
 		query["regions"] = bson.M{
 			"$regex":   region,
@@ -91,6 +99,8 @@ func (service *cardService) GetCards(
 			"$options": "i",
 		}
 	}
+
+	fmt.Println(query)
 
 	opts, paginationErr := helper.Pagination(page, limit)
 	if paginationErr != nil {
