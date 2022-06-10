@@ -48,7 +48,7 @@ func (service *deckService) CreateDeck(title string, coverCardCode string, cards
 	return deck, nil
 }
 
-func (service *deckService) GetDeckById(id string) (*models.Deck, error) {
+func (service *deckService) GetDeckById(id string) (*models.DeckResponse, error) {
 	objectId, objectIdErr := primitive.ObjectIDFromHex(id)
 	if objectIdErr != nil {
 		return nil, errors.New("Invalid objectId")
@@ -63,5 +63,22 @@ func (service *deckService) GetDeckById(id string) (*models.Deck, error) {
 		return nil, err
 	}
 
-	return deck, nil
+	deckResponse := models.DeckResponse{
+		Id:            deck.Id,
+		Title:         deck.Title,
+		CoverCardCode: deck.CoverCardCode,
+		CoverUrl:      deck.CoverUrl,
+		Cards:         [40]models.Card{},
+	}
+
+	for i, cardCode := range deck.Cards {
+		card, getCardErr := service.cardService.GetCardByCardCode(cardCode)
+		if getCardErr != nil {
+			return nil, errors.New("Card not found!")
+		}
+
+		deckResponse.Cards[i] = *card
+	}
+
+	return &deckResponse, nil
 }

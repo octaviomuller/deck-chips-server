@@ -12,6 +12,14 @@ type Deck struct {
 	Cards         [40]string         `json:"cards"`
 }
 
+type DeckResponse struct {
+	Id            primitive.ObjectID `json:"_id"`
+	Title         string             `json:"title"`
+	CoverCardCode string             `json:"coverCardCode"`
+	CoverUrl      string             `json:"coverUrl"`
+	Cards         [40]Card           `json:"cards"`
+}
+
 type CreateDeck struct {
 	Title         string     `json:"title"`
 	CoverCardCode string     `json:"coverCardCode"`

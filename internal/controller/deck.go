@@ -10,7 +10,7 @@ import (
 
 type deckService interface {
 	CreateDeck(title string, coverCardCode string, cards [40]string) (*models.Deck, error)
-	GetDeckById(id string) (*models.Deck, error)
+	GetDeckById(id string) (*models.DeckResponse, error)
 }
 
 type DeckController struct {
