@@ -36,3 +36,19 @@ func (repository *deckRepository) FindOne(query interface{}, opts *options.FindO
 
 	return result, nil
 }
+
+func (repository *deckRepository) FindMany(query interface{}, opts *options.FindOptions) (*[]models.Deck, error) {
+	result := &[]models.Deck{}
+
+	cur, findErr := repository.collection.Find(context.TODO(), query, opts)
+	if findErr != nil {
+		return nil, findErr
+	}
+
+	decodeErr := cur.All(context.TODO(), result)
+	if decodeErr != nil {
+		return nil, decodeErr
+	}
+
+	return result, nil
+}

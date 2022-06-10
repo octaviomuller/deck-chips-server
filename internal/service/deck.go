@@ -12,6 +12,7 @@ import (
 type deckRepository interface {
 	Insert(insertObj models.Deck) (*models.Deck, error)
 	FindOne(query interface{}, opts *options.FindOneOptions) (*models.Deck, error)
+	FindMany(query interface{}, opts *options.FindOptions) (*[]models.Deck, error)
 }
 
 type deckService struct {
@@ -81,4 +82,16 @@ func (service *deckService) GetDeckById(id string) (*models.DeckResponse, error)
 	}
 
 	return &deckResponse, nil
+}
+
+func (service *deckService) GetDecks() (*[]models.Deck, error) {
+	query := bson.M{}
+	opts := &options.FindOptions{}
+
+	decks, err := service.deckRepository.FindMany(query, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	return decks, err
 }

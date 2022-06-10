@@ -16,6 +16,7 @@ func SetupRouter(server *server.Server) {
 		{
 			deck.POST("/", server.DeckController.Post)
 			deck.GET("/:id", server.DeckController.Get)
+			deck.GET("/", server.DeckController.Index)
 		}
 	}
 }
