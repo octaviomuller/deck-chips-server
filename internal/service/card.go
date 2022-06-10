@@ -107,7 +107,10 @@ func (service *cardService) GetCards(
 		return nil, paginationErr
 	}
 
-	// opts.SetSort(bson.M{"cost": 1})
+	opts.SetSort(bson.D{
+		{Key: "cost", Value: 1},
+		{Key: "_id", Value: 1},
+	})
 
 	cards, err := service.cardRepository.FindMany(query, opts)
 	if err != nil {
