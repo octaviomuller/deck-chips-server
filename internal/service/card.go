@@ -71,7 +71,9 @@ func (service *cardService) GetCards(
 			return nil, errors.New("Invalid type for variable 'cost'")
 		}
 
-		query["cost"] = costNumber
+		query["cost"] = bson.M{
+			"$gte": costNumber,
+		}
 	}
 	if cardType != "" {
 		if cardTypeLower := strings.ToLower(cardType); cardTypeLower == "champion" {
