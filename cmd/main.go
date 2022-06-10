@@ -16,12 +16,18 @@ func main() {
 	db := config.ConnectDatabase()
 
 	cardCollection := db.Collection("cards")
+	deckCollection := db.Collection("decks")
 
-	cardRepository := database.NewCardRepository(cardCollection)
+	cardRepository := database.NewCardRepository(*cardCollection)
+	deckRepository := database.NewDeckRepository(*deckCollection)
+
 	cardService := service.NewCardService(cardRepository)
-	cardController := controller.NewCardController(cardService)
+	deckService := service.NewDeckService(deckRepository, *cardService)
 
-	server := server.NewServer(engine, db, cardController)
+	cardController := controller.NewCardController(cardService)
+	deckController := controller.NewDeckController(deckService)
+
+	server := server.NewServer(engine, db, cardController, deckController)
 
 	routes.SetupRouter(server)
 

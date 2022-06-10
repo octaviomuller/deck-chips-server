@@ -9,10 +9,10 @@ import (
 )
 
 type cardRepository struct {
-	collection *mongo.Collection
+	collection mongo.Collection
 }
 
-func NewCardRepository(collection *mongo.Collection) *cardRepository {
+func NewCardRepository(collection mongo.Collection) *cardRepository {
 	return &cardRepository{
 		collection: collection,
 	}
