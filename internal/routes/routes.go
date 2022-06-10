@@ -12,5 +12,9 @@ func SetupRouter(server *server.Server) {
 			card.GET("/:code", server.CardController.Get)
 			card.GET("/", server.CardController.Index)
 		}
+		deck := router.Group("/decks")
+		{
+			deck.POST("/", server.DeckController.Post)
+		}
 	}
 }

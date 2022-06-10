@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -99,8 +98,6 @@ func (service *cardService) GetCards(
 			"$options": "i",
 		}
 	}
-
-	fmt.Println(query)
 
 	opts, paginationErr := helper.Pagination(page, limit)
 	if paginationErr != nil {

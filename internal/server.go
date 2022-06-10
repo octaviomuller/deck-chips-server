@@ -10,13 +10,15 @@ type Server struct {
 	Engine         *gin.Engine
 	Database       *mongo.Database
 	CardController *controller.CardController
+	DeckController *controller.DeckController
 }
 
-func NewServer(engine *gin.Engine, database *mongo.Database, cardController *controller.CardController) *Server {
+func NewServer(engine *gin.Engine, database *mongo.Database, cardController *controller.CardController, deckController *controller.DeckController) *Server {
 	return &Server{
 		Engine:         engine,
 		Database:       database,
 		CardController: cardController,
+		DeckController: deckController,
 	}
 }
 
