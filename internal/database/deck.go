@@ -63,3 +63,12 @@ func (repository *deckRepository) UpdateById(id primitive.ObjectID, updateObj in
 
 	return nil
 }
+
+func (repository *deckRepository) DeleteOne(query interface{}) error {
+	_, err := repository.collection.DeleteOne(context.TODO(), query)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

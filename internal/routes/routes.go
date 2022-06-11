@@ -18,6 +18,7 @@ func SetupRouter(server *server.Server) {
 			deck.GET("/:id", server.DeckController.Get)
 			deck.GET("/", server.DeckController.Index)
 			deck.PATCH("/:id", server.DeckController.Patch)
+			deck.DELETE("/:id", server.DeckController.Delete)
 		}
 	}
 }

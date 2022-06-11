@@ -13,6 +13,7 @@ type deckService interface {
 	GetDeckById(id string) (*models.DeckResponse, error)
 	GetDecks(title string) (*[]models.Deck, error)
 	UpdateDeck(id string, title *string, coverCardCode *string, cards *[]string) error
+	DeleteDeck(id string) error
 }
 
 type DeckController struct {
@@ -132,6 +133,28 @@ func (controller *DeckController) Patch(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{
 		"message": "Update deck successfully",
+	})
+	return
+}
+
+func (controller *DeckController) Delete(context *gin.Context) {
+	id := context.Params.ByName("id")
+
+	if id == "" {
+		context.JSON(http.StatusUnprocessableEntity, gin.H{
+			"message": "Invalid id",
+		})
+		return
+	}
+
+	serviceErr := controller.deckService.DeleteDeck(id)
+	if serviceErr != nil {
+		context.JSON(http.StatusInternalServerError, serviceErr)
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": "Deck deleted successfully",
 	})
 	return
 }

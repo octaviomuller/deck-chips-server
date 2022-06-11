@@ -14,6 +14,7 @@ type deckRepository interface {
 	FindOne(query interface{}, opts *options.FindOneOptions) (*models.Deck, error)
 	FindMany(query interface{}, opts *options.FindOptions) (*[]models.Deck, error)
 	UpdateById(id primitive.ObjectID, updateObj interface{}) error
+	DeleteOne(query interface{}) error
 }
 
 type deckService struct {
@@ -135,6 +136,24 @@ func (service *deckService) UpdateDeck(id string, title *string, coverCardCode *
 	updateErr := service.deckRepository.UpdateById(objectId, updateObj)
 	if updateErr != nil {
 		return updateErr
+	}
+
+	return nil
+}
+
+func (service *deckService) DeleteDeck(id string) error {
+	objectId, objectIdErr := primitive.ObjectIDFromHex(id)
+	if objectIdErr != nil {
+		return errors.New("Invalid objectId")
+	}
+
+	query := bson.M{
+		"_id": objectId,
+	}
+
+	err := service.deckRepository.DeleteOne(query)
+	if err != nil {
+		return err
 	}
 
 	return nil
