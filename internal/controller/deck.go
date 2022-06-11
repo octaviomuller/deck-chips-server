@@ -9,9 +9,9 @@ import (
 )
 
 type deckService interface {
-	CreateDeck(title string, coverCardCode string, cards []string) (*models.Deck, error)
+	CreateDeck(title string, coverCardCode string, cards []string, userName string, userId string) (*models.Deck, error)
 	GetDeckById(id string) (*models.DeckResponse, error)
-	GetDecks(title string) (*[]models.Deck, error)
+	GetDecks(title string, userId string) (*[]models.Deck, error)
 	UpdateDeck(id string, title *string, coverCardCode *string, cards *[]string) error
 	DeleteDeck(id string) error
 }
@@ -40,8 +40,10 @@ func (controller *DeckController) Post(context *gin.Context) {
 	title := body.Title
 	coverCardCode := body.CoverCardCode
 	cards := body.Cards
+	userName := body.UserName
+	userId := body.UserId
 
-	deck, serviceErr := controller.deckService.CreateDeck(title, coverCardCode, cards)
+	deck, serviceErr := controller.deckService.CreateDeck(title, coverCardCode, cards, userName, userId)
 	if serviceErr != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"message": serviceErr.Error(),
@@ -80,8 +82,9 @@ func (controller *DeckController) Get(context *gin.Context) {
 
 func (controller *DeckController) Index(context *gin.Context) {
 	title := context.Request.URL.Query().Get("title")
+	userId := context.Request.URL.Query().Get("userId")
 
-	decks, serviceError := controller.deckService.GetDecks(title)
+	decks, serviceError := controller.deckService.GetDecks(title, userId)
 	if serviceError != nil {
 		if serviceError == mongo.ErrNoDocuments {
 			context.JSON(http.StatusBadRequest, gin.H{

@@ -29,7 +29,7 @@ func NewDeckService(deckRepository deckRepository, cardService cardService) *dec
 	}
 }
 
-func (service *deckService) CreateDeck(title string, coverCardCode string, cards []string) (*models.Deck, error) {
+func (service *deckService) CreateDeck(title string, coverCardCode string, cards []string, userName string, userId string) (*models.Deck, error) {
 	card, gerCardErr := service.cardService.GetCardByCardCode(coverCardCode)
 	if gerCardErr != nil {
 		return nil, errors.New("Invalid card code")
@@ -41,6 +41,8 @@ func (service *deckService) CreateDeck(title string, coverCardCode string, cards
 		CoverCardCode: coverCardCode,
 		CoverUrl:      card.Assets[0].FullAbsolutePath,
 		Cards:         cards,
+		UserName:      userName,
+		UserId:        userId,
 	}
 
 	deck, insertErr := service.deckRepository.Insert(insertDeck)
@@ -72,21 +74,23 @@ func (service *deckService) GetDeckById(id string) (*models.DeckResponse, error)
 		CoverCardCode: deck.CoverCardCode,
 		CoverUrl:      deck.CoverUrl,
 		Cards:         []models.Card{},
+		UserName:      deck.UserName,
+		UserId:        deck.UserId,
 	}
 
-	for i, cardCode := range deck.Cards {
+	for _, cardCode := range deck.Cards {
 		card, getCardErr := service.cardService.GetCardByCardCode(cardCode)
 		if getCardErr != nil {
 			return nil, errors.New("Card not found!")
 		}
 
-		deckResponse.Cards[i] = *card
+		deckResponse.Cards = append(deckResponse.Cards, *card)
 	}
 
 	return &deckResponse, nil
 }
 
-func (service *deckService) GetDecks(title string) (*[]models.Deck, error) {
+func (service *deckService) GetDecks(title string, userId string) (*[]models.Deck, error) {
 	query := bson.M{}
 	opts := &options.FindOptions{}
 
@@ -95,6 +99,9 @@ func (service *deckService) GetDecks(title string) (*[]models.Deck, error) {
 			"$regex":   title,
 			"$options": "i",
 		}
+	}
+	if userId != "" {
+		query["userId"] = userId
 	}
 
 	decks, err := service.deckRepository.FindMany(query, opts)
