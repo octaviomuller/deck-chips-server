@@ -9,9 +9,9 @@ import (
 )
 
 type deckService interface {
-	CreateDeck(title string, coverCardCode string, cards [40]string) (*models.Deck, error)
+	CreateDeck(title string, coverCardCode string, cards []string) (*models.Deck, error)
 	GetDeckById(id string) (*models.DeckResponse, error)
-	GetDecks() (*[]models.Deck, error)
+	GetDecks(title string) (*[]models.Deck, error)
 	UpdateDeck(id string, title *string, coverCardCode *string, cards *[]string) error
 }
 
@@ -78,7 +78,9 @@ func (controller *DeckController) Get(context *gin.Context) {
 }
 
 func (controller *DeckController) Index(context *gin.Context) {
-	decks, serviceError := controller.deckService.GetDecks()
+	title := context.Request.URL.Query().Get("title")
+
+	decks, serviceError := controller.deckService.GetDecks(title)
 	if serviceError != nil {
 		if serviceError == mongo.ErrNoDocuments {
 			context.JSON(http.StatusBadRequest, gin.H{

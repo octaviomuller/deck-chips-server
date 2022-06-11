@@ -9,7 +9,7 @@ type Deck struct {
 	Title         string             `json:"title"`
 	CoverCardCode string             `json:"coverCardCode" bson:"coverCardCode"`
 	CoverUrl      string             `json:"coverUrl" bson:"coverUrl"`
-	Cards         [40]string         `json:"cards"`
+	Cards         []string           `json:"cards"`
 }
 
 type DeckResponse struct {
@@ -17,13 +17,13 @@ type DeckResponse struct {
 	Title         string             `json:"title"`
 	CoverCardCode string             `json:"coverCardCode"`
 	CoverUrl      string             `json:"coverUrl"`
-	Cards         [40]Card           `json:"cards"`
+	Cards         []Card             `json:"cards"`
 }
 
 type CreateDeck struct {
-	Title         string     `json:"title"`
-	CoverCardCode string     `json:"coverCardCode"`
-	Cards         [40]string `jsons:"cards"`
+	Title         string   `json:"title"`
+	CoverCardCode string   `json:"coverCardCode"`
+	Cards         []string `jsons:"cards"`
 }
 
 type UpdateDeck struct {
