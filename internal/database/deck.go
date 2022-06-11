@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/octaviomuller/deck-chips-server/internal/models"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -17,6 +18,7 @@ func NewDeckRepository(collection mongo.Collection) *deckRepository {
 		collection: &collection,
 	}
 }
+
 func (repository *deckRepository) Insert(insertObj models.Deck) (*models.Deck, error) {
 	_, err := repository.collection.InsertOne(context.TODO(), insertObj)
 	if err != nil {
@@ -51,4 +53,13 @@ func (repository *deckRepository) FindMany(query interface{}, opts *options.Find
 	}
 
 	return result, nil
+}
+
+func (repository *deckRepository) UpdateById(id primitive.ObjectID, updateObj interface{}) error {
+	_, err := repository.collection.UpdateByID(context.TODO(), id, updateObj)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

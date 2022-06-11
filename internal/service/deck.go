@@ -13,6 +13,7 @@ type deckRepository interface {
 	Insert(insertObj models.Deck) (*models.Deck, error)
 	FindOne(query interface{}, opts *options.FindOneOptions) (*models.Deck, error)
 	FindMany(query interface{}, opts *options.FindOptions) (*[]models.Deck, error)
+	UpdateById(id primitive.ObjectID, updateObj interface{}) error
 }
 
 type deckService struct {
@@ -94,4 +95,40 @@ func (service *deckService) GetDecks() (*[]models.Deck, error) {
 	}
 
 	return decks, err
+}
+
+func (service *deckService) UpdateDeck(id string, title *string, coverCardCode *string, cards *[]string) error {
+	objectId, objectIdErr := primitive.ObjectIDFromHex(id)
+	if objectIdErr != nil {
+		return errors.New("Invalid objectId")
+	}
+
+	update := bson.M{}
+
+	if title != nil {
+		update["title"] = title
+	}
+
+	if coverCardCode != nil {
+		card, gerCardErr := service.cardService.GetCardByCardCode(*coverCardCode)
+		if gerCardErr != nil {
+			return errors.New("Invalid card code")
+		}
+
+		update["coverCardCode"] = coverCardCode
+		update["coverUrl"] = card.Assets[0].FullAbsolutePath
+	}
+
+	if cards != nil {
+		update["cards"] = cards
+	}
+
+	updateObj := bson.M{"$set": update}
+
+	updateErr := service.deckRepository.UpdateById(objectId, updateObj)
+	if updateErr != nil {
+		return updateErr
+	}
+
+	return nil
 }

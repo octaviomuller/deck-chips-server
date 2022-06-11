@@ -7,8 +7,8 @@ import (
 type Deck struct {
 	Id            primitive.ObjectID `bson:"_id" json:"_id"`
 	Title         string             `json:"title"`
-	CoverCardCode string             `json:"coverCardCode"`
-	CoverUrl      string             `json:"coverUrl"`
+	CoverCardCode string             `json:"coverCardCode" bson:"coverCardCode"`
+	CoverUrl      string             `json:"coverUrl" bson:"coverUrl"`
 	Cards         [40]string         `json:"cards"`
 }
 
@@ -24,4 +24,11 @@ type CreateDeck struct {
 	Title         string     `json:"title"`
 	CoverCardCode string     `json:"coverCardCode"`
 	Cards         [40]string `jsons:"cards"`
+}
+
+type UpdateDeck struct {
+	Title         *string   `json:"title"`
+	CoverCardCode *string   `json:"coverCardCode" bson:"coverCardCode"`
+	CoverUrl      *string   `json:"coverUrl" bson:"coverUrl"`
+	Cards         *[]string `jsons:"cards"`
 }

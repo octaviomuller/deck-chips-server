@@ -12,6 +12,7 @@ type deckService interface {
 	CreateDeck(title string, coverCardCode string, cards [40]string) (*models.Deck, error)
 	GetDeckById(id string) (*models.DeckResponse, error)
 	GetDecks() (*[]models.Deck, error)
+	UpdateDeck(id string, title *string, coverCardCode *string, cards *[]string) error
 }
 
 type DeckController struct {
@@ -93,5 +94,42 @@ func (controller *DeckController) Index(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, decks)
+	return
+}
+
+func (controller *DeckController) Patch(context *gin.Context) {
+	id := context.Params.ByName("id")
+	if id == "" {
+		context.JSON(http.StatusUnprocessableEntity, gin.H{
+			"message": "Invalid id",
+		})
+		return
+	}
+
+	body := models.UpdateDeck{}
+
+	bodyErr := context.BindJSON(&body)
+	if bodyErr != nil {
+		context.JSON(http.StatusUnprocessableEntity, gin.H{
+			"message": "Invalid request body",
+		})
+		return
+	}
+
+	title := body.Title
+	coverCardCode := body.CoverCardCode
+	cards := body.Cards
+
+	serviceErr := controller.deckService.UpdateDeck(id, title, coverCardCode, cards)
+	if serviceErr != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": serviceErr.Error(),
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": "Update deck successfully",
+	})
 	return
 }
